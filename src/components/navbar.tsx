@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "./ui/navigation-menu";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from "./ui/navigation-menu";
 
 export default function Navbar() {
   return (
@@ -12,8 +12,9 @@ export default function Navbar() {
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}><Link to={'/dashboard'}>Dashboard</Link></NavigationMenuLink>
+                <span className={navigationMenuTriggerStyle()}>
+                <Link to={"/dashboard"}>Dashboard</Link>
+                </span>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>

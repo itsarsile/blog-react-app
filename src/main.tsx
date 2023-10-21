@@ -6,12 +6,17 @@ import Root from './routes/root.tsx'
 import ErrorPage from './error-page.tsx'
 import Dashboard from './routes/dashboard'
 import Home from './routes/home'
+import Post from './routes/post/index.tsx'
+import PostLayout from './routes/post/PostLayout.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<Root />} errorElement={<ErrorPage />}>
-      <Route index element={<Navigate to="/home" replace/>}/>
+      <Route index element={<Navigate to="/home" replace />} />
       <Route path='home' element={<Home />} />
+      <Route element={<PostLayout />}>
+        <Route path='post/:postId' element={<Post />} />
+      </Route>
       <Route path='dashboard' element={<Dashboard />} />
     </Route>
   )
