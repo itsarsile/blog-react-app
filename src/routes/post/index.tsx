@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet"
 import { useParams } from "react-router-dom"
 
 export default function Post() {
-  let {postId} = useParams()
+  const {postId} = useParams()
   console.log(postId)
   return (
     <>
