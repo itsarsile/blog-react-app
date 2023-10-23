@@ -1,13 +1,13 @@
-import { Helmet } from "react-helmet"
+import { Helmet } from "react-helmet";
 
 export default function Dashboard() {
-  return (
-    <>
-      <Helmet>
-        <title>hello-world - Dashboard</title>
-      </Helmet>
+	return (
+		<>
+			<Helmet>
+				<title>hello-world - Dashboard</title>
+			</Helmet>
 
-      <div>dashboard</div>
-    </>
-  )
+			<div>dashboard</div>
+		</>
+	);
 }
