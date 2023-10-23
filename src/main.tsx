@@ -21,6 +21,7 @@ import { CookiesProvider } from 'react-cookie'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 import { queryClientAtom } from "jotai-tanstack-query";
 import { useHydrateAtoms } from "jotai/utils";
+import { Toaster } from "./components/ui/toaster.tsx";
 
 
 const queryClient = new QueryClient({
@@ -58,6 +59,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 		<CookiesProvider defaultSetOptions={{ path: '/'}}>
 		<Provider>
 			<HydrateAtoms>
+				<Toaster />
 				<RouterProvider router={router} />
 			</HydrateAtoms>
 		</Provider>

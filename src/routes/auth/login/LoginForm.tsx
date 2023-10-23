@@ -15,6 +15,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useAtom } from "jotai";
 import { AuthStatus, authAtom } from "@/store/store";
+import { toast, useToast } from "@/components/ui/use-toast";
+import { useCookies } from "react-cookie";
 
 
 interface LoginResponse {
@@ -23,7 +25,7 @@ interface LoginResponse {
 		username: string;
 		role: string | null,
 	}
-	token: string;
+	access_token: string;
 }
 
 const loginFormSchema = z.object({
@@ -52,6 +54,8 @@ const [, loginAtom] = atomsWithMutation(() => ({
 }))
 
 export default function LoginForm() {
+	const [cookies, setCookie] = useCookies(['access_token'])
+	const {toast} = useToast()
 	const [login ,mutate] = useAtom(loginAtom)
 	const [value, setValue] = useAtom(authAtom)
 	const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -64,15 +68,18 @@ export default function LoginForm() {
 
 	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
 		try {
-
 			const response = await mutate([{ username: values.username, password: values.password}])	
 			if (login.isSuccess) {
 				setValue({
 					user: response.user,
-					token: response.token,
+					token: response.access_token,
 					status: AuthStatus.Authenticated,
 			})
+				setCookie('access_token', response.access_token)
 			}
+			toast({
+				title: "Login successful!"
+			})
 		} catch (error) {
 			console.error(error);
 		}

@@ -1,4 +1,4 @@
-import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 export enum AuthStatus {
 	Unauthenticated = "unauthenticated",
@@ -19,7 +19,7 @@ interface IAuthAtom {
 	status: AuthStatus;
 }
 
-export const authAtom = atom<IAuthAtom>({
+export const authAtom = atomWithStorage<IAuthAtom>('authStatus', {
 	user: {
 		id: 0,
 		username: "",
