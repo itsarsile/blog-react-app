@@ -9,6 +9,11 @@
 			"recommended": true
 		}
 	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 2
+	},
 	"files": {
 		"ignore": ["src/components/ui/*.tsx"]
 	}

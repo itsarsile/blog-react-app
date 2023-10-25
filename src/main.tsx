@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import {
 	Navigate,
@@ -7,35 +7,29 @@ import {
 	createBrowserRouter,
 	createRoutesFromElements,
 } from "react-router-dom";
-import "./globals.css";
-import Root from "./routes/root.tsx";
 import ErrorPage from "./error-page.tsx";
+import "./globals.css";
+import Login from "./routes/auth/login/index.tsx";
 import Dashboard from "./routes/dashboard";
 import Home from "./routes/home";
-import Post from "./routes/post/index.tsx";
 import PostLayout from "./routes/post/PostLayout.tsx";
-import { Provider } from "jotai/react";
-import Login from "./routes/auth/login/index.tsx";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { CookiesProvider } from 'react-cookie'
-import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
-import { queryClientAtom } from "jotai-tanstack-query";
-import { useHydrateAtoms } from "jotai/utils";
-import { Toaster } from "./components/ui/toaster.tsx";
+import Post from "./routes/post/index.tsx";
+import Root from "./routes/root.tsx";
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Provider } from "jotai";
+import { CookiesProvider } from "react-cookie";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import EditPost from "./routes/dashboard/articles/edit.tsx";
+import CreateArticles from "./routes/dashboard/articles/create.tsx";
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: Infinity,
-    },
-  },
-})
-
-const HydrateAtoms = ({ children }) => {
-  useHydrateAtoms([[queryClientAtom, queryClient]])
-  return children
-}
+	defaultOptions: {
+		queries: {
+			staleTime: Infinity,
+		},
+	},
+});
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -46,7 +40,16 @@ const router = createBrowserRouter(
 				<Route element={<PostLayout />}>
 					<Route path="article/:articleId" element={<Post />} />
 				</Route>
-				<Route path="dashboard" element={<Dashboard />} />
+				<Route
+					path="dashboard"
+					element={
+						<Suspense fallback={<div>Loading...</div>}>
+							<Dashboard />
+						</Suspense>
+					}
+				/>
+				<Route path="dashboard/article/edit" element={<EditPost />} />
+				<Route path="dashboard/article/create" element={<CreateArticles />} />
 				<Route element={<Login />} path="/auth/login" />
 			</Route>
 		</>,
@@ -56,15 +59,12 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<QueryClientProvider client={queryClient}>
-		<CookiesProvider defaultSetOptions={{ path: '/'}}>
-		<Provider>
-			<HydrateAtoms>
-				<Toaster />
-				<RouterProvider router={router} />
-			</HydrateAtoms>
-		</Provider>
-			<ReactQueryDevtools initialIsOpen={true}/>
-		</CookiesProvider>
+			<CookiesProvider defaultSetOptions={{ path: "/" }}>
+				<Provider>
+					<RouterProvider router={router} />
+				</Provider>
+				<ReactQueryDevtools initialIsOpen={true} />
+			</CookiesProvider>
 		</QueryClientProvider>
 	</React.StrictMode>,
 );

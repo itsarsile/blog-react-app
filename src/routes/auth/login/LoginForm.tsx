@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
 	Form,
 	FormControl,
@@ -17,14 +16,15 @@ import { useAtom } from "jotai";
 import { AuthStatus, authAtom } from "@/store/store";
 import { toast, useToast } from "@/components/ui/use-toast";
 import { useCookies } from "react-cookie";
-
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface LoginResponse {
 	user: {
 		id: number;
 		username: string;
-		role: string | null,
-	}
+		role: string | null;
+	};
 	access_token: string;
 }
 
@@ -37,27 +37,33 @@ const loginFormSchema = z.object({
 	}),
 });
 
-
 const [, loginAtom] = atomsWithMutation(() => ({
-	mutationKey: ['login'],
-	mutationFn: async ({username, password}: {username: string, password: string}) => {
+	mutationKey: ["login"],
+	mutationFn: async ({
+		username,
+		password,
+	}: { username: string; password: string }) => {
 		const res = await fetch("http://localhost:8080/auth/login", {
 			method: "POST",
 			body: JSON.stringify({ username, password }),
 			headers: {
-				'Content-Type': "application/json; charset=UTF-8"
-			}
-		})
-		const data: LoginResponse = await res.json()
+				"Content-Type": "application/json; charset=UTF-8",
+			},
+		});
+		const data: LoginResponse = await res.json();
 		return data;
-	}
-}))
+	},
+}));
 
 export default function LoginForm() {
-	const [cookies, setCookie] = useCookies(['access_token'])
-	const {toast} = useToast()
-	const [login ,mutate] = useAtom(loginAtom)
-	const [value, setValue] = useAtom(authAtom)
+	const [, setCookie] = useCookies(["access_token"]);
+	const { toast } = useToast();
+	const [login, mutate] = useAtom(loginAtom);
+	const [value, setValue] = useAtom(authAtom);
+	const navigate = useNavigate()
+	if (value.status === AuthStatus.Authenticated) {
+		navigate('/')
+	}
 	const form = useForm<z.infer<typeof loginFormSchema>>({
 		resolver: zodResolver(loginFormSchema),
 		defaultValues: {
@@ -68,24 +74,30 @@ export default function LoginForm() {
 
 	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
 		try {
-			const response = await mutate([{ username: values.username, password: values.password}])	
-			if (login.isSuccess) {
+			const response = await mutate([
+				{ username: values.username, password: values.password },
+			]);
+			if (response.user) {
 				setValue({
 					user: response.user,
 					token: response.access_token,
 					status: AuthStatus.Authenticated,
-			})
-				setCookie('access_token', response.access_token)
+				});
+				setCookie("access_token", response.access_token);
+				toast({
+					title: "Login successful!",
+				});
+			} else {
+				toast({
+					title: "Login failed, check your username and password!",
+				});
 			}
-			toast({
-				title: "Login successful!"
-			})
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
-	console.log(value);
+	console.log(login);
 
 	return (
 		<Form {...form}>
@@ -124,7 +136,6 @@ export default function LoginForm() {
 					<Button type="submit">Login</Button>
 				</div>
 			</form>
-			{JSON.stringify(value)}
 		</Form>
 	);
 }

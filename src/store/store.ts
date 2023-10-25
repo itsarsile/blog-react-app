@@ -14,12 +14,12 @@ interface IUser {
 }
 
 interface IAuthAtom {
-	user: IUser;	
+	user: IUser;
 	token: string;
 	status: AuthStatus;
 }
 
-export const authAtom = atomWithStorage<IAuthAtom>('authStatus', {
+export const authAtom = atomWithStorage<IAuthAtom>("authStatus", {
 	user: {
 		id: 0,
 		username: "",

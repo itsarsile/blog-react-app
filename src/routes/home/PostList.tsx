@@ -31,7 +31,7 @@ export default function PostList() {
 				<p className="text-sm text-slate-400">
 					{new Date(article.created_at).toLocaleDateString("id-ID")}
 				</p>
-				<p>{article.content}</p>
+				<p>{article.content.substring(0, 100)} <span className="text-sky-400">More...</span></p>
 			</div>
 		</Link>
 	));
